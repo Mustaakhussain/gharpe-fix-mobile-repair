@@ -1,0 +1,20 @@
+# GharPe Fix
+
+> GharPe Fix is a doorstep mobile phone repair service operating in Rudrapur, Kashipur, Gadarpur, Bazpur, Kichha, and across Udham Singh Nagar district, Uttarakhand, India. A technician visits the customer's home or office to repair the phone on-site.
+
+## About
+GharPe Fix repairs all major mobile phone brands including Samsung, Xiaomi, Vivo, Oppo, Realme, and Apple. Services include screen/display repair, battery replacement, charging port repair, water damage repair, software issues, and camera/speaker repair. Customers book a slot through the website, receive a unique ticket number, and are contacted via WhatsApp to confirm the final price and time before the technician arrives.
+
+## Key Information
+- Service area: Rudrapur, Kashipur, Gadarpur, Bazpur, Kichha, Udham Singh Nagar (Uttarakhand, India)
+- Service type: Doorstep / at-home mobile phone repair
+- Contact: WhatsApp +91 9582692579, email wiresharx@gmail.com
+- Business hours: Monday–Saturday, 9:00 AM – 8:00 PM
+- Pricing: Starting from ₹299, varies by device model and issue; confirmed via WhatsApp before repair
+- Booking: Available directly on the website via the "Book Slot" page
+
+## Pages
+- [Home / Book Slot](https://mustaakhussain.github.io/gharpe-fix-mobile-repair/): Booking form and live service queue
+- Service list and pricing overview: see "Service" section on the homepage
+- About Us: see "About Us" section on the homepage
+- Terms and Conditions: see "Terms" section on the homepage
