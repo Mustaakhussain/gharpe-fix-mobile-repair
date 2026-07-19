@@ -178,23 +178,13 @@
     font-family:'IBM Plex Mono',monospace;margin-bottom:14px;
   }
 
-  /* ---------- LIVE QUEUE + RATING ---------- */
-  .queue-item{
-    display:flex;justify-content:space-between;align-items:center;gap:10px;
-    background:#fff;border:1px solid #DDD5C0;border-radius:8px;
-    padding:12px 14px;margin-bottom:8px;
+  /* ---------- REFUND NOTE ---------- */
+  .refund-note{
+    background:#E1EAE5;border-left:4px solid var(--circuit);
+    border-radius:8px;padding:16px 18px;
   }
-  .queue-left .qid{font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--copper-dark);font-weight:600;}
-  .queue-left .qissue{font-size:13.5px;color:var(--text-dark);margin-top:2px;}
-  .queue-left .qbrand{font-size:11.5px;color:#8a8371;}
-  .status-pill{
-    font-size:11px;font-weight:600;padding:4px 9px;border-radius:20px;
-    font-family:'IBM Plex Mono',monospace;white-space:nowrap;
-  }
-  .status-pill.pending{background:#F0E4D3;color:var(--copper-dark);}
-  .status-pill.completed{background:#E1EAE5;color:var(--circuit);}
-  .queue-stars{font-size:12px;color:var(--copper);margin-top:2px;}
-  .queue-empty{font-size:13.5px;color:#8a8371;padding:10px 0;}
+  .refund-note h3{font-size:15px;margin-bottom:6px;color:var(--circuit);}
+  .refund-note p{font-size:13.5px;color:var(--text-dark);margin:0;line-height:1.6;}
 
   .ticket-confirm{
     background:var(--ink);color:var(--paper);
@@ -205,13 +195,6 @@
   .ticket-confirm .tc-num{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;color:var(--copper);margin:4px 0;}
   .ticket-confirm .tc-note{font-size:12.5px;opacity:.8;}
 
-  .star-row{display:flex;gap:6px;margin-bottom:14px;}
-  .star-row button{
-    background:none;border:1.5px solid #CFC5AD;border-radius:6px;
-    width:42px;height:42px;font-size:19px;cursor:pointer;color:#CFC5AD;
-    transition:all .1s;
-  }
-  .star-row button.active,.star-row button:hover{color:var(--copper);border-color:var(--copper);}
   .rate-msg{font-size:13px;margin-top:8px;padding:8px 10px;border-radius:6px;display:none;}
   .rate-msg.ok{display:block;background:#E1EAE5;color:var(--circuit);}
   .rate-msg.err{display:block;background:#F5E1DD;color:var(--danger);}
@@ -275,9 +258,6 @@
     .stat-row{gap:8px;}
     .stat{min-width:0;padding:12px;}
     .stat .num{font-size:17px;}
-    .queue-item{flex-wrap:wrap;}
-    .queue-left .qissue{word-break:break-word;}
-    .star-row button{width:38px;height:38px;font-size:17px;}
   }
 </style>
 
@@ -447,37 +427,14 @@
 <div class="ticket-confirm" id="ticketConfirm">
 <div class="tc-label">Aapka Ticket Number</div>
 <div class="tc-num" id="ticketNum">—</div>
-<div class="tc-note">Ise sambhal ke rakhein — service complete hone ke baad isi number se aap rating de sakte hain.</div>
+<div class="tc-note">Ise sambhal ke rakhein — future reference ke liye kaam aayega.</div>
 </div>
 </section>
 <section class="block">
-<h2>Live Service Queue</h2>
-<p class="form-note" style="margin-top:-6px;margin-bottom:14px;">Sabhi customers ki queries yahan dikhti hain — naam, number ya address kabhi nahi dikhaya jaata, sirf ticket, device aur status.</p>
-<div id="queueList"><div class="queue-empty">Load ho raha hai…</div></div>
-</section>
-<section class="block">
-<h2>Apni Service Rate Karein</h2>
-<p class="form-note" style="margin-top:-6px;margin-bottom:14px;">Service complete hone ke baad apna Ticket Number daal kar rating dein.</p>
-<div class="field">
-<label for="rateTicket">Ticket Number</label>
-<input id="rateTicket" placeholder="jaise: GF-4821" type="text"/>
+<div class="refund-note">
+<h3>Refund Policy</h3>
+<p>Advance payment poori tarah <strong>refundable</strong> hai — agar phone repair na ho paaye, price/negotiation par sehmati na bane, ya kisi bhi aur wajah se service complete na ho, to aapka advance turant wapas kar diya jaayega.</p>
 </div>
-<div class="field">
-<label>Rating</label>
-<div class="star-row" id="starRow">
-<button data-val="1" type="button">★</button>
-<button data-val="2" type="button">★</button>
-<button data-val="3" type="button">★</button>
-<button data-val="4" type="button">★</button>
-<button data-val="5" type="button">★</button>
-</div>
-</div>
-<div class="field">
-<label for="rateComment">Comment (optional)</label>
-<textarea id="rateComment" placeholder="Service kaisi rahi?"></textarea>
-</div>
-<button class="submit-btn" id="submitRating" type="button">Rating Submit Karein →</button>
-<div class="rate-msg" id="rateMsg"></div>
 </section>
 </div>
 <!-- ================= SERVICES ================= -->
@@ -652,7 +609,7 @@
     lastTicket = ticket;
     document.getElementById('ticketNum').textContent = ticket;
     document.getElementById('ticketConfirm').classList.add('show');
-    document.getElementById('rateTicket').value = ticket;
+    document.getElementById('adminTicket').value = ticket;
   }
 
   document.getElementById('bookingForm').addEventListener('submit', async function(e){
@@ -660,7 +617,6 @@
     const d = getFormData();
     const ticket = await saveBookingToSheet(d);
     showTicket(ticket);
-    loadQueue();
 
     const msg =
 `Naya Booking Request - GharPe Fix
@@ -687,7 +643,6 @@ Time Slot: ${d.slot}`;
     const d = getFormData();
     const ticket = await saveBookingToSheet(d);
     showTicket(ticket);
-    loadQueue();
 
     const subject = `Booking Request - ${d.name} (${d.brand})`;
     const body =
@@ -704,89 +659,6 @@ Time Slot: ${d.slot}`;
     const mailtoUrl = `mailto:${OWNER_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     window.location.href = mailtoUrl;
   });
-
-  // ---- Live Queue (masked — no personal details) ----
-  async function loadQueue(){
-    const el = document.getElementById('queueList');
-    if(SHEET_API_URL.includes("PASTE_YOUR")){
-      el.innerHTML = '<div class="queue-empty">Queue setup abhi baaki hai — Apps Script URL add karein.</div>';
-      return;
-    }
-    try{
-      const res = await fetch(SHEET_API_URL + "?action=queue");
-      const rows = await res.json();
-      if(!rows.length){
-        el.innerHTML = '<div class="queue-empty">Abhi tak koi query nahi hai.</div>';
-        return;
-      }
-      el.innerHTML = rows.map(r=>{
-        const stars = r.rating ? '★'.repeat(r.rating) + '☆'.repeat(5-r.rating) : "";
-        const statusClass = (r.status||"Pending").toLowerCase() === "completed" ? "completed" : "pending";
-        return `
-          <div class="queue-item">
-            <div class="queue-left">
-              <div class="qid">${r.ticket}</div>
-              <div class="qissue">${r.issue || ""}</div>
-              <div class="qbrand">${r.brand || ""}</div>
-              ${stars ? `<div class="queue-stars">${stars}</div>` : ""}
-            </div>
-            <div class="status-pill ${statusClass}">${statusClass === "completed" ? "Completed" : "Pending"}</div>
-          </div>`;
-      }).join('');
-    }catch(err){
-      el.innerHTML = '<div class="queue-empty">Queue load nahi ho payi.</div>';
-    }
-  }
-
-  // ---- Star rating ----
-  let selectedRating = 0;
-  document.querySelectorAll('#starRow button').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      selectedRating = parseInt(btn.dataset.val);
-      document.querySelectorAll('#starRow button').forEach(b=>{
-        b.classList.toggle('active', parseInt(b.dataset.val) <= selectedRating);
-      });
-    });
-  });
-
-  document.getElementById('submitRating').addEventListener('click', async function(){
-    const msgEl = document.getElementById('rateMsg');
-    const ticket = document.getElementById('rateTicket').value.trim();
-    const comment = document.getElementById('rateComment').value.trim();
-    msgEl.className = "rate-msg";
-
-    if(!ticket || !selectedRating){
-      msgEl.textContent = "Ticket number aur rating dono zaroori hain.";
-      msgEl.classList.add('err');
-      return;
-    }
-    if(SHEET_API_URL.includes("PASTE_YOUR")){
-      msgEl.textContent = "Rating system abhi setup nahi hua hai.";
-      msgEl.classList.add('err');
-      return;
-    }
-    try{
-      const res = await fetch(SHEET_API_URL, {
-        method:"POST",
-        headers:{"Content-Type":"text/plain;charset=utf-8"},
-        body: JSON.stringify({ action:"rate", ticket, rating:selectedRating, comment })
-      });
-      const data = await res.json();
-      if(data.success){
-        msgEl.textContent = "Dhanyawad! Aapki rating submit ho gayi.";
-        msgEl.classList.add('ok');
-        loadQueue();
-      }else{
-        msgEl.textContent = "Ye ticket number nahi mila. Dobara check karein.";
-        msgEl.classList.add('err');
-      }
-    }catch(err){
-      msgEl.textContent = "Kuch gadbad ho gayi, dobara try karein.";
-      msgEl.classList.add('err');
-    }
-  });
-
-  loadQueue();
 
   // ---- Admin: hidden Owner Lookup page ----
   document.getElementById('adminLink').addEventListener('click', function(e){
